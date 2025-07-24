@@ -2,15 +2,16 @@ use std::ffi::OsString;
 use std::fs;
 use std::io;
 use std::os::windows::process::CommandExt;
-use std::path::Path;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::time::Instant;
 use windows::{
     core::*, Win32::Foundation::FALSE, Win32::Storage::FileSystem as FS,
     Win32::System::WindowsProgramming as WP,
 };
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Drive {
     pub name: String,
     pub letter: char,
@@ -103,47 +104,7 @@ pub fn get_files_in_folder(path: &Path) -> io::Result<Vec<String>> {
     }
 
     Ok(file_names)
-    // fs::read_dir(path)?.map(|file_name| {
-    //     let file_name = file_name
-    // })
 }
-
-// fn get_files_in_folder(path: &Path) -> io::Result<Vec<FileInfo>> {
-//     let mut file_infos = Vec::new();
-
-//     for entry in fs::read_dir(path)? {
-//         match entry {
-//             Ok(entry) => {
-//                 let name = entry.file_name().to_string_lossy().to_string();
-//                 let kind = if entry.metadata()?.is_dir() {
-//                     FileKind::Directory
-//                 } else {
-//                     FileKind::File
-//                 };
-
-//                 file_infos.push(FileInfo { name, kind });
-//             }
-//             Err(err) => return Err(err),
-//         };
-//     }
-
-//     Ok(file_infos)
-// }
-
-// fn run() {
-//     // let ds = get_all_drives();
-
-//     // for d in ds {
-//     //     println!("{:#?}", d);
-//     // }
-//     let path = Path::new("F:\\source");
-//     let file_names = get_files_in_folder(&path).unwrap();
-
-//     println!("In dir {}", path.display());
-//     for file_name in &file_names {
-//         println!("{}", file_name.to_str().unwrap());
-//     }
-// }
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
@@ -161,23 +122,6 @@ pub fn open_file(path: &Path) -> windows::core::Result<()> {
         .current_dir(path.parent().unwrap());
 
     command.spawn().expect("command failed to start");
-
-    Ok(())
-}
-fn walk<F>(dir: &Path, mut cb: &mut F) -> io::Result<()>
-where
-    F: FnMut(&fs::DirEntry, PathBuf),
-{
-    for entry in fs::read_dir(dir)? {
-        let entry = entry?;
-        let path = entry.path();
-
-        if entry.metadata().unwrap().is_dir() {
-            walk(&path, cb)?;
-        }
-
-        cb(&entry, path);
-    }
 
     Ok(())
 }
@@ -214,11 +158,6 @@ fn find_file_recursively(name: &Path, directory_path: &Path, result: &mut Vec<Pa
             find_file_recursively(name, &entry_path, result);
         }
 
-        // if entry.file_name() == name {
-        //     println!("Found {:?}", entry_path);
-        //     result.push(entry_path);
-        // }
-
         if entry
             .file_name()
             .to_str()
@@ -231,38 +170,7 @@ fn find_file_recursively(name: &Path, directory_path: &Path, result: &mut Vec<Pa
     }
 }
 
-use std::time::Instant;
-
 pub fn find_file(name: &Path, directory_path: &Path) -> Vec<PathBuf> {
-    // let mut result = Vec::new();
-
-    // let start_time = Instant::now();
-    // walk(directory_path, &mut |entry, path| {
-    //     if entry.file_name() == name {
-    //         println!("Found {:?}", path);
-    //         result.push(path)
-    //     }
-    // })
-    // .unwrap();
-    // let elapsed_time = start_time.elapsed();
-
-    // println!("Search took {} ms to complete", elapsed_time.as_millis());
-
-    // result
-    // result = vec::new()
-    // path = directory_path
-
-    // loop:
-
-    // get all child (dirs & files separately) of `path`
-
-    // if `name` is any child of `path`:
-    //     add child to result
-
-    // for dir in dirs:
-    //     path = join(path, dir)
-    //^- loop back
-
     let mut result = Vec::new();
 
     let start_time = Instant::now();

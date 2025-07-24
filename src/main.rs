@@ -1,15 +1,10 @@
 mod file_system;
-mod look;
 
-use file_system::{get_all_drives, get_files_in_folder, open_file};
+use file_system::{find_file, get_all_drives, get_files_in_folder, open_file};
 use iced::widget::{button, column, container, row, scrollable, text, text_input, Column};
-use iced::{theme, Background, Color, Theme};
-use iced::{Alignment, Element, Length, Sandbox, Settings};
-// use iced_aw::modal;
+use iced::{theme, Alignment, Background, Color, Element, Length, Sandbox, Settings, Theme};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-
-use crate::file_system::find_file;
 
 #[derive(Default)]
 struct ButtonStyle {
@@ -51,8 +46,8 @@ impl Sandbox for State {
 
     fn new() -> Self {
         Self {
-            path: PathBuf::from("F:\\source\\"),
-            file_names: get_files_in_folder(Path::new("F:\\source\\")).unwrap(),
+            path: PathBuf::from("C:\\"),
+            file_names: get_files_in_folder(Path::new("C:\\")).unwrap(),
             input_value: String::new(),
             active_file: None,
             last_clicked_time: Instant::now(),
@@ -208,13 +203,6 @@ impl Sandbox for State {
 
     fn theme(&self) -> Theme {
         Theme::Dark
-        // Theme::custom(theme::Palette {
-        //     background: Color::from_rgb(1.0, 0.9, 1.0),
-        //     text: Color::BLACK,
-        //     primary: Color::from_rgb(0.5, 0.5, 0.0),
-        //     success: Color::from_rgb(0.0, 1.0, 0.0),
-        //     danger: Color::from_rgb(1.0, 0.0, 0.0),
-        // })
     }
 }
 
